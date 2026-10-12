@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Platforms>x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <StartupObject>HmmExample.Program</StartupObject>
+    <AssemblyName>HMM_FPGA_UI_Example.Managed</AssemblyName>
+    <SdkBaseline>$(MSBuildProjectDirectory)\..\HMM_SYS_CoreAPI-20260422</SdkBaseline>
+    <SdkRuntime>$(SdkBaseline)\HMM_SYS_CoreEXE-20260422</SdkRuntime>
+    <RestoreSources>$(MSBuildProjectDirectory)\offline-packages</RestoreSources>
+    <NuGetAudit>false</NuGetAudit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="Enable-CrashDumps.ps1;Disable-CrashDumps.ps1" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="$(SdkRuntime)\DataInsightLib.dll;$(SdkRuntime)\io_settings.json">
+      <Link>%(Filename)%(Extension)</Link><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(SdkRuntime)\data\*.json">
+      <Link>data\%(Filename)%(Extension)</Link><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <EmbeddedResource Include="..\HMM_FPGA_UI_Example\sdk-baseline.json" LogicalName="sdk-baseline.json" />
+  </ItemGroup>
+  <Target Name="RequireX64" BeforeTargets="PrepareForBuild">
+    <Error Condition="'$(Platform)' != 'x64' Or '$(PlatformTarget)' != 'x64'" Text="This diagnostic supports x64 only. Build with -p:Platform=x64." />
+  </Target>
+  <!-- The core DLL belongs to the operator once deployed. Never track it as a cleanable build output. -->
+  <Target Name="ProtectManualCoreDll" BeforeTargets="CoreClean;_CleanGetCurrentAndPriorFileWrites">
+    <ReadLinesFromFile File="$(IntermediateOutputPath)$(CleanFile)" Condition="Exists('$(IntermediateOutputPath)$(CleanFile)')">
+      <Output TaskParameter="Lines" ItemName="_ManualDllPriorWrites" />
+    </ReadLinesFromFile>
+    <ItemGroup>
+      <_ManualDllPriorWrites Remove="@(_ManualDllPriorWrites)" Condition="'%(Filename)%(Extension)' == 'HMMSysCoreAPILib.dll'" />
+      <FileWrites Remove="@(FileWrites)" Condition="'%(Filename)%(Extension)' == 'HMMSysCoreAPILib.dll'" />
+    </ItemGroup>
+    <WriteLinesToFile File="$(IntermediateOutputPath)$(CleanFile)" Lines="@(_ManualDllPriorWrites)" Overwrite="true" WriteOnlyWhenDifferent="true" Condition="Exists('$(IntermediateOutputPath)$(CleanFile)')" />
+  </Target>
+  <Target Name="SeedMissingCoreDll" AfterTargets="CopyFilesToOutputDirectory">
+    <Message Importance="high" Text="Preserving operator-supplied core DLL: $(TargetDir)HMMSysCoreAPILib.dll" Condition="Exists('$(TargetDir)HMMSysCoreAPILib.dll')" />
+    <Copy SourceFiles="$(SdkRuntime)\HMMSysCoreAPILib.dll" DestinationFiles="$(TargetDir)HMMSysCoreAPILib.dll" Condition="!Exists('$(TargetDir)HMMSysCoreAPILib.dll')" />
+  </Target>
+</Project>

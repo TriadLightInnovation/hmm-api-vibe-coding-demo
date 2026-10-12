@@ -1,0 +1,125 @@
+<Window x:Class="HmmExample.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:display="clr-namespace:HmmExample.Display"
+        Title="HMM FPGA Control Card · Integrated UI" Width="1480" Height="1040" MinWidth="1160" MinHeight="900" Background="#101720" Foreground="#E5EBF3">
+  <Window.Resources>
+    <Style TargetType="Button"><Setter Property="Padding" Value="14,8"/><Setter Property="Margin" Value="0,0,8,0"/><Setter Property="MinWidth" Value="90"/></Style>
+    <Style x:Key="Panel" TargetType="Border"><Setter Property="Background" Value="#192430"/><Setter Property="CornerRadius" Value="8"/><Setter Property="Padding" Value="16"/><Setter Property="Margin" Value="6"/></Style>
+    <Style x:Key="Readout" TargetType="TextBox"><Setter Property="IsReadOnly" Value="True"/><Setter Property="TextWrapping" Value="Wrap"/><Setter Property="VerticalScrollBarVisibility" Value="Auto"/><Setter Property="Background" Value="#192430"/><Setter Property="Foreground" Value="#E5EBF3"/><Setter Property="BorderThickness" Value="0"/><Setter Property="Padding" Value="10"/><Setter Property="FontFamily" Value="Consolas"/><Setter Property="FontSize" Value="12"/></Style>
+    <Style x:Key="Number" TargetType="TextBox"><Setter Property="Width" Value="75"/><Setter Property="Padding" Value="6,4"/><Setter Property="Margin" Value="0,0,20,0"/></Style>
+    <Style x:Key="Value" TargetType="TextBlock"><Setter Property="FontSize" Value="19"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Margin" Value="0,5,14,0"/></Style>
+  </Window.Resources>
+  <DockPanel LastChildFill="True">
+    <Menu x:Name="ApplicationMenu" DockPanel.Dock="Top" IsMainMenu="True" Background="{DynamicResource {x:Static SystemColors.MenuBrushKey}}" Foreground="{DynamicResource {x:Static SystemColors.MenuTextBrushKey}}">
+      <MenuItem Header="Calibration"><MenuItem x:Name="AdcCalibrationMenuItem" Header="ADC Calibration" IsEnabled="False" Click="AdcCalibration_Click"/></MenuItem>
+    </Menu>
+  <Grid x:Name="Root" Margin="18" Background="#101720">
+    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+    <StackPanel Grid.Row="1" Margin="6,0,0,12"><TextBlock Text="HMM FPGA Control Card" FontSize="26" FontWeight="SemiBold"/><TextBlock Text="Integrated acquisition and live preview" Foreground="#AABACB" Margin="0,4,0,0"/></StackPanel>
+    <Border Grid.Row="2" Style="{StaticResource Panel}">
+      <StackPanel>
+        <WrapPanel x:Name="GeometryControls" VerticalAlignment="Center" Margin="0,0,0,14">
+          <TextBlock Text="Trigger Mode" VerticalAlignment="Center" Margin="0,0,8,0"/>
+          <ComboBox x:Name="TriggerMode" Width="160" SelectedIndex="1" Margin="0,0,20,0"><ComboBoxItem Content="External Trigger"/><ComboBoxItem Content="Internal Trigger"/></ComboBox>
+          <TextBlock Text="X Pixel" VerticalAlignment="Center" Margin="0,0,8,0"/><TextBox x:Name="XPixel" Text="1024" Style="{StaticResource Number}"/>
+          <TextBlock Text="Y Pixel" VerticalAlignment="Center" Margin="0,0,8,0"/><TextBox x:Name="YPixel" Text="1024" Style="{StaticResource Number}"/>
+          <TextBlock Text="Oversample Pixel" VerticalAlignment="Center" Margin="0,0,8,0"/><TextBox x:Name="OversamplePixel" Text="16" Style="{StaticResource Number}"/>
+          <TextBlock Text="Oversample Frame" VerticalAlignment="Center" Margin="0,0,8,0"/><TextBox x:Name="OversampleFrame" Text="10" Style="{StaticResource Number}"/>
+        </WrapPanel>
+        <StackPanel x:Name="InternalTimingPanel" Margin="0,0,0,12">
+          <TextBlock Text="Calculated / Requested Timing · scanner full-cycle frequency" Foreground="#AABACB" Margin="0,0,0,8"/>
+          <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="350"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+            <StackPanel Margin="0,0,25,0"><TextBlock Text="Scan Frequency"/><Slider x:Name="SpeedSlider" Minimum="0" Maximum="7" Value="1" TickFrequency="1" SmallChange="1" LargeChange="1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True" TickPlacement="BottomRight" Margin="10,6,10,0"/>
+              <UniformGrid Columns="8"><UniformGrid.Resources><Style TargetType="TextBlock"><Setter Property="HorizontalAlignment" Value="Center"/></Style></UniformGrid.Resources><TextBlock Text="800"/><TextBlock Text="400"/><TextBlock Text="200"/><TextBlock Text="100"/><TextBlock Text="50"/><TextBlock Text="20"/><TextBlock Text="10"/><TextBlock Text="5 Hz"/></UniformGrid>
+            </StackPanel>
+            <UniformGrid Grid.Column="1" Columns="4">
+              <StackPanel><TextBlock Text="Frequency"/><TextBlock x:Name="RequestedFrequency" Text="400 Hz" Style="{StaticResource Value}"/></StackPanel>
+              <StackPanel><TextBlock Text="Dwell Time"/><TextBlock x:Name="InternalDwell" Text="—" Style="{StaticResource Value}"/></StackPanel>
+              <StackPanel><TextBlock Text="Frame Time"/><TextBlock x:Name="InternalFrameTime" Text="—" Style="{StaticResource Value}"/></StackPanel>
+              <StackPanel><TextBlock Text="Frame Rate"/><TextBlock x:Name="InternalFrameRate" Text="—" Style="{StaticResource Value}"/></StackPanel>
+            </UniformGrid>
+          </Grid>
+        </StackPanel>
+        <StackPanel x:Name="ExternalTimingPanel" Visibility="Collapsed" Margin="0,0,0,12">
+          <TextBlock Text="Calculated from measured resonant frequency · frame rate is calculated, not measured" Foreground="#AABACB" Margin="0,0,0,8"/>
+          <UniformGrid Columns="4">
+            <StackPanel><TextBlock Text="Measured Resonant Frequency"/><TextBlock x:Name="MeasuredFrequency" Text="—" Style="{StaticResource Value}"/></StackPanel>
+            <StackPanel><TextBlock Text="Fastest Pixel Dwell"/><TextBlock x:Name="ExternalDwell" Text="—" Style="{StaticResource Value}"/></StackPanel>
+            <StackPanel><TextBlock Text="Frame Time"/><TextBlock x:Name="ExternalFrameTime" Text="—" Style="{StaticResource Value}"/></StackPanel>
+            <StackPanel><TextBlock Text="Frame Rate"/><TextBlock x:Name="ExternalFrameRate" Text="—" Style="{StaticResource Value}"/></StackPanel>
+          </UniformGrid>
+          <TextBlock x:Name="ResonantPhaseTimes" Text="Pos Time: —     Neg Time: —" Foreground="#AABACB" Margin="0,6,0,0"/>
+        </StackPanel>
+        <TextBlock x:Name="ExternalValidation" Text="External: Implemented / Awaiting Resonant Hardware Validation" Foreground="#FFC79A" Margin="0,0,0,8" Visibility="Collapsed"/>
+        <TextBlock x:Name="RequestValidation" Foreground="#FFC79A" TextWrapping="Wrap" Visibility="Collapsed" Margin="0,0,0,8"/>
+        <WrapPanel Margin="0,0,0,10">
+          <StackPanel x:Name="LineAverageControls" Orientation="Horizontal">
+            <CheckBox x:Name="LineAverageEnabled" Content="Line Average" Foreground="#E5EBF3" VerticalAlignment="Center" Margin="0,0,12,0"/>
+            <TextBlock Text="Average Lines" VerticalAlignment="Center" Margin="0,0,8,0"/><TextBox x:Name="AverageLines" Text="3" Style="{StaticResource Number}"/>
+          </StackPanel>
+          <CheckBox x:Name="FrameAverageEnabled" Content="Frame Average" Foreground="#E5EBF3" VerticalAlignment="Center" Margin="0,0,12,0"/>
+          <TextBlock Text="Average Frames" VerticalAlignment="Center" Margin="0,0,8,0"/><TextBox x:Name="AverageFrames" Text="3" Style="{StaticResource Number}"/>
+          <TextBlock x:Name="AverageStatus" Foreground="#AABACB" VerticalAlignment="Center" TextWrapping="Wrap"/>
+        </WrapPanel>
+        <WrapPanel VerticalAlignment="Center">
+          <TextBlock Text="Number Of Lines" ToolTip="Processed / averaged output lines per callback block. SDK raw lines = this value × Line Average N." VerticalAlignment="Center" Margin="0,0,8,0"/>
+          <ComboBox x:Name="LinesPerCallback" Width="65" SelectedIndex="1" Margin="0,0,15,0"><ComboBoxItem Content="16"/><ComboBoxItem Content="32"/></ComboBox>
+          <TextBlock Text="Live Preview Hz" VerticalAlignment="Center" Margin="0,0,8,0"/>
+          <ComboBox x:Name="PreviewRate" Width="65" SelectedIndex="2" Margin="0,0,20,0"><ComboBoxItem Content="5"/><ComboBoxItem Content="15"/><ComboBoxItem Content="30"/><ComboBoxItem Content="60"/></ComboBox>
+          <TextBlock Text="Preview Max Dimension" VerticalAlignment="Center" Margin="0,0,8,0"/>
+          <ComboBox x:Name="PreviewDimension" Width="75" SelectedIndex="1" Margin="0,0,20,0" ToolTip="Display only; long edge limited to 1024 or 2048. Acquisition and averaging stay full resolution."><ComboBoxItem Content="1024"/><ComboBoxItem Content="2048"/></ComboBox>
+          <Button x:Name="InitializeButton" Content="Initialize" Click="Initialize_Click" IsEnabled="False"/>
+          <Button x:Name="ParametersButton" Content="Prepare" Click="Prepare_Click" IsEnabled="False"/>
+          <Button x:Name="StartButton" Content="Start Scan" Click="Start_Click" IsEnabled="False"/>
+          <Button x:Name="ScanOnceButton" Content="Scan Once" Click="ScanOnce_Click" IsEnabled="False" ToolTip="Internal: Initialize → Prepare → first processed frame from every enabled channel → Stop. Stop can cancel while waiting."/>
+          <Button x:Name="StopButton" Content="Stop Scan" Click="Stop_Click" IsEnabled="False"/>
+          <Button x:Name="ExportButton" Content="Export Diagnostics" Click="Export_Click"/>
+        </WrapPanel>
+        <WrapPanel Margin="0,8,0,0">
+          <Button x:Name="RescanButton" Content="Direct Start Test" Click="DirectStart_Click" IsEnabled="False"/>
+          <TextBlock x:Name="DirectRescanStatus" Foreground="#FFC79A" VerticalAlignment="Center" TextWrapping="Wrap"/>
+        </WrapPanel>
+        <TextBlock x:Name="DirectStartWarning" Foreground="#FFC79A" FontSize="11" TextWrapping="Wrap"/>
+      </StackPanel>
+    </Border>
+    <Grid Grid.Row="3" Margin="6,12,6,0"><Grid.ColumnDefinitions><ColumnDefinition Width="2*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="380"/></Grid.ColumnDefinitions>
+      <display:SquareChannelPanel x:Name="ChannelGrid" Margin="0,0,16,0">
+        <display:ChannelViewport x:Name="Channel1" Label="CH1"/><display:ChannelViewport x:Name="Channel2" Label="CH2"/>
+        <display:ChannelViewport x:Name="Channel3" Label="CH3"/><display:ChannelViewport x:Name="Channel4" Label="CH4"/>
+      </display:SquareChannelPanel>
+      <Border Grid.Column="1" Background="#192430" CornerRadius="8" Padding="12" Margin="0,0,16,0">
+        <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+          <StackPanel Margin="0,0,0,10">
+            <TextBlock Text="Composite" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,8"/>
+            <CheckBox x:Name="CompositeEnabled" Content="Enable Composite" Foreground="#E5EBF3" IsChecked="True" Margin="0,0,0,10"/>
+            <TextBlock Text="Include in Composite / Color" Foreground="#AABACB" FontSize="11" Margin="0,0,0,6"/>
+            <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="90"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+              <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+              <CheckBox x:Name="CompositeInclude1" Grid.Row="0" Content="CH1 Include" IsChecked="True" Foreground="#E5EBF3" VerticalAlignment="Center" ToolTip="Display only: include CH1 in Composite"/><ComboBox x:Name="CompositeColor1" Grid.Row="0" Grid.Column="1" Margin="0,2"/>
+              <CheckBox x:Name="CompositeInclude2" Grid.Row="1" Content="CH2 Include" IsChecked="True" Foreground="#E5EBF3" VerticalAlignment="Center" ToolTip="Display only: include CH2 in Composite"/><ComboBox x:Name="CompositeColor2" Grid.Row="1" Grid.Column="1" Margin="0,2"/>
+              <CheckBox x:Name="CompositeInclude3" Grid.Row="2" Content="CH3 Include" IsChecked="True" Foreground="#E5EBF3" VerticalAlignment="Center" ToolTip="Display only: include CH3 in Composite"/><ComboBox x:Name="CompositeColor3" Grid.Row="2" Grid.Column="1" Margin="0,2"/>
+              <CheckBox x:Name="CompositeInclude4" Grid.Row="3" Content="CH4 Include" IsChecked="True" Foreground="#E5EBF3" VerticalAlignment="Center" ToolTip="Display only: include CH4 in Composite"/><ComboBox x:Name="CompositeColor4" Grid.Row="3" Grid.Column="1" Margin="0,2"/>
+            </Grid>
+          </StackPanel>
+          <display:SquareViewportHost Grid.Row="1"><display:ChannelViewport x:Name="CompositeViewport" Label="Composite" RawCaption="PROCESSED COMPOSITE - includes Dummy/Overscan"/></display:SquareViewportHost>
+        </Grid>
+      </Border>
+      <TabControl Grid.Column="2" Background="#192430" Foreground="Black">
+        <TabItem Header="Channels"><TextBox x:Name="ChannelDiagnostics" Style="{StaticResource Readout}"/></TabItem>
+        <TabItem Header="Parameters"><TextBox x:Name="ActiveParameters" Style="{StaticResource Readout}"/></TabItem>
+        <TabItem Header="API Timing"><TextBox x:Name="TimingDetails" Style="{StaticResource Readout}"/></TabItem>
+        <TabItem Header="ADC"><TextBox x:Name="AdcDiagnostics" Style="{StaticResource Readout}"/></TabItem>
+        <TabItem Header="Metadata"><TextBox x:Name="MetadataDetails" Style="{StaticResource Readout}"/></TabItem>
+      </TabControl>
+    </Grid>
+    <Border Grid.Row="4" Style="{StaticResource Panel}" Margin="6,12,6,0"><StackPanel>
+      <TextBlock x:Name="ScanState" Text="State: Requires Initialize" FontWeight="SemiBold"/>
+      <TextBlock x:Name="SdkStatus" Text="SDK Status: Checking deployment" Foreground="#AABACB" Margin="0,5,0,0"/>
+        <TextBlock x:Name="SdkProfileStatus" Foreground="#AABACB" FontSize="11" TextWrapping="Wrap" Margin="0,4,0,0"/>
+      <TextBlock x:Name="LastWarning" Text="Last Warning: None" Foreground="#FFBE55" TextWrapping="Wrap" MaxHeight="48" Margin="0,5,0,0"/>
+      <TextBlock x:Name="LastAdcCalibration" Text="Last ADC Calibration: Not Run" Foreground="#AABACB" TextWrapping="Wrap"/>
+      <TextBlock x:Name="LastError" Text="Last Error: None" Foreground="#FFC79A" TextWrapping="Wrap" MaxHeight="48" Margin="0,5,0,0"/>
+      <TextBlock Text="Processed display - includes Dummy/Overscan · Uniform fit · Hardware actions start only from manual buttons" Foreground="#8193A7" FontSize="11" Margin="0,5,0,0"/>
+    </StackPanel></Border>
+  </Grid>
+  </DockPanel>
+</Window>
