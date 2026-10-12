@@ -1,0 +1,590 @@
+Prepare and verify this computer’s development environment for a later
+recorded HMM DemoApp UI-building task.
+
+The current workspace already contains:
+- A complete CoreSYSAPI / SYS CORE API package, possibly named "HMM Sys".
+- The latest complete managed Example code, possibly named
+  "Example code" or "example code_managed".
+
+Use the actual folders and project files found in this workspace.
+Do not assume another computer’s username, Desktop path, or SDK location.
+
+This task is:
+
+Discover the supplied project and SDK
+→ Check the environment
+→ Resolve necessary dependencies
+→ Create an independent environment working copy
+→ Build the existing application
+→ Run offline verification
+→ Apply only minimal permitted fixes when necessary
+→ Produce a Verified Development Template.
+
+This task is NOT:
+- Building or redesigning DemoApp.
+- Changing the instrument UI.
+- Reimplementing acquisition or image processing.
+- Testing hardware.
+
+Complete the environment preparation and verification unless a genuine
+blocker requires user input. Do not stop after merely listing dependencies.
+
+
+==================================================
+1. Identify the actual project and SDK
+==================================================
+
+Read applicable workspace instructions first.
+
+Locate:
+- The latest managed .csproj and its required ProjectReference entries.
+- The associated .sln, if present.
+- global.json.
+- Directory.Build.props / Directory.Build.targets.
+- Directory.Packages.props.
+- NuGet.Config and packages.lock.json, if present.
+- Build and test scripts.
+- SDK deployment settings.
+- SDK profile / hash verification files.
+- Offline test entry points.
+- Current implementation documentation.
+
+The complete managed example is the application baseline.
+The CoreSYSAPI package supplies its native SDK and related files.
+
+Do not confuse the managed example with:
+- An old native C++ project.
+- The vendor’s console sample.
+- A deployment-only EXE folder.
+- Historical source snapshots.
+
+Determine the intended source from the actual project, current documentation,
+functionality, and version records—not file timestamps alone.
+
+If multiple candidates remain genuinely ambiguous after inspection,
+ask the user to select one.
+
+Record:
+- Source project path.
+- Project references.
+- TargetFramework.
+- UseWPF or other actual UI framework settings.
+- PlatformTarget and RuntimeIdentifier.
+- Framework-dependent / self-contained settings.
+- Required SDK selection rules.
+- Declared packages and versions.
+- SDK package root and selected profile.
+- Available offline tests.
+
+If Environment already contains a verified working copy and report,
+inspect their identities and freshness before creating another copy.
+Do not overwrite previously repaired work automatically.
+
+
+==================================================
+2. Protect the original files
+==================================================
+
+Create or reuse this area under the current workspace:
+
+Environment/
+  work/
+  reports/
+  patches/
+  Check-Environment.ps1
+  Install-Prerequisites.ps1
+  Build-Baseline.ps1
+  Test-Offline.ps1
+  Environment-Report.md
+  Verified-Template.json
+
+Use the supplied example and CoreSYSAPI folders as read-only references.
+
+Before changes:
+- Record their file inventory and SHA-256 manifest.
+- Record the scope of that inventory.
+- Exclude the newly generated Environment area from the original-source scan.
+- Handle links/junctions deliberately; do not recursively follow them
+  into unrelated locations.
+
+Create an independent managed-project working copy under Environment/work.
+
+Include required source, resources, project references, scripts, and tests.
+Avoid copying unnecessary generated bin/obj/.vs folders and historical logs
+or crash dumps.
+
+Do not:
+- Modify the original source or SDK.
+- Delete unknown files.
+- Overwrite an existing working copy containing unreviewed changes.
+- Regenerate approved SDK hashes merely to accept different binaries.
+
+Record all permitted working-copy changes separately.
+
+
+==================================================
+3. Inspect the current environment
+==================================================
+
+Use Windows-native execution for this Windows application.
+
+Inspect:
+- Windows version and OS architecture.
+- Current process architecture.
+- PowerShell executable path and version.
+- dotnet executable path.
+- dotnet --info.
+- dotnet --list-sdks.
+- dotnet --list-runtimes.
+- The SDK selected when commands run from the actual project directory.
+- Required desktop/runtime components.
+- Native DLL runtime dependencies.
+- Availability of the tools actually used by the build/test scripts.
+- NuGet sources and connectivity where restore is required.
+- Write access to work, output, logs, and reports folders.
+
+Determine requirements from the actual project.
+Do not hard-code a .NET version from an older report.
+
+For the expected x64 managed application:
+Confirm that the chosen build/runtime path is compatible with its x64
+native SDK dependencies.
+
+Do not treat an existing EXE’s ability to launch as proof that a usable
+compiler/SDK is installed.
+
+Build the managed project and required references directly.
+Do not require the old native C++ project to build merely because it is
+included in the same solution.
+
+Do not install MSVC, Boost, Qt, MFC, WinUI, or a full Visual Studio
+installation unless the selected project actually requires them.
+
+Check native dependencies by static inspection where possible.
+Do not load or execute HMM native DLLs just to inspect exports or dependencies.
+
+
+==================================================
+4. Install only missing, necessary prerequisites
+==================================================
+
+Create a precise prerequisite plan.
+
+For each missing item, identify:
+- Why the selected project needs it.
+- The required version or compatibility basis.
+- Whether it already exists outside the current PATH.
+- An official installation source.
+- Installation scope and administrator requirements.
+
+Potential items include:
+- A compatible .NET SDK.
+- Required desktop/runtime components.
+- A compatible x64 Visual C++ runtime required by native DLL imports.
+- Tools explicitly required by existing scripts.
+- Packages already declared by the project.
+
+These are candidates to verify, not a mandatory installation list.
+
+Prefer using a suitable existing installation.
+Record its actual executable path in machine-specific environment evidence.
+Do not hard-code another computer’s private tool-cache path into portable scripts.
+
+You may restore packages already declared by the project.
+For system installation or elevated actions, request a consolidated approval
+and continue after approval.
+
+Do not:
+- Upgrade TargetFramework or package major versions.
+- Swap SDK profiles or native DLL versions.
+- Install unrelated tools.
+- Modify global PATH unnecessarily.
+- Change machine-wide security or execution policies.
+- Restart the computer automatically.
+
+Use official sources.
+Do not bypass authentication, download security, or installation permissions.
+
+If a required version cannot be obtained or is incompatible, report the
+specific blocker rather than silently upgrading the application.
+
+
+==================================================
+5. Make the working copy portable
+==================================================
+
+Inspect source/project/build/deployment settings for obsolete absolute paths.
+
+Resolve paths relative to:
+- The workspace.
+- The working project.
+- An explicit SDK-root parameter.
+- The deployment directory, as appropriate.
+
+Prefer existing configuration mechanisms.
+Make the smallest working-copy path correction if none exists.
+
+Preserve the distinction between:
+- Original SDK source.
+- Selected SDK profile.
+- Deployed runtime files.
+- Generated application output.
+
+Do not mix DLLs, JSON files, or data folders from different SDK packages.
+
+Preserve existing approved-profile and hash checks.
+If a profile is unknown, inventory it but do not approve it automatically.
+
+Do not modify:
+- P/Invoke signatures or struct layouts.
+- SDK DLL/header/data contents.
+- Acquisition lifecycle.
+- Averaging or Composite algorithms.
+- Scanner timing formulas.
+
+Do not invent missing SDK headers or copy ABI declarations from an unrelated version.
+
+Document every portability change as a diff or patch.
+
+
+==================================================
+6. Restore, build, and verify deployment
+==================================================
+
+Inspect existing build scripts before executing them.
+
+Check whether they:
+- Launch an application.
+- Run hardware tests.
+- Call HMM APIs.
+- Install drivers.
+- Modify the registry.
+- Update firmware.
+
+Use only a verified hardware-free path.
+If necessary, invoke the managed project build directly.
+
+Restore the declared dependencies without arbitrary version changes.
+
+If a valid packages.lock.json exists:
+Use the project’s locked-restore policy where applicable.
+Do not regenerate the lock file merely to hide a mismatch.
+
+Build:
+- Debug x64.
+- Release x64.
+
+Preserve the current framework and deployment model.
+Do not require a new self-contained or single-file publishing strategy.
+
+Record:
+- Working directory.
+- Actual executable and tool version.
+- Full command.
+- Start/end time.
+- Exit code.
+- stdout/stderr and build reports.
+
+Target 0 warnings and 0 errors.
+Do not globally suppress warnings or remove checks to achieve this.
+Report unresolved warnings explicitly.
+
+Verify that this run actually produced its expected artifacts.
+An old EXE already present in an output directory is not build evidence.
+
+Verify deployment against the selected package/profile, including the files
+actually required by the current project, such as:
+- HMMSysCoreAPILib.dll.
+- DataInsightLib.dll.
+- io_settings.json.
+- The complete required data folder.
+- Profile manifests.
+- Managed assemblies and runtime metadata.
+- Other required resources or dependencies.
+
+Do not hard-code historical file counts.
+
+Check that the deployment does not rely on an old source directory or
+a particular Terminal current directory.
+
+Do not execute HMM hardware APIs during dependency or deployment checks.
+
+
+==================================================
+7. Offline tests and UI launch/close verification
+==================================================
+
+Read the test entry points before running them.
+
+Offline tests must not call:
+- initialize.
+- setParameters.
+- startScan.
+- stopScan.
+- Callback registration APIs.
+- AO, laser, stage, or firmware operations.
+- Other native HMM hardware APIs.
+
+This restriction applies to startup, test execution, error recovery,
+and shutdown—not only button clicks.
+
+Run the existing hardware-free functional and ABI tests.
+Examples may include:
+- Struct layout checks.
+- Geometry and timing calculations.
+- Frame assembly.
+- Averaging.
+- Composite.
+- State handling.
+- Logging and deployment.
+
+Use the actual available tests.
+Do not invent tests or copy historical test counts.
+
+Verify normal offline Release UI launch and close.
+
+Run the existing --ui-smoke entry point or its documented equivalent:
+- Five consecutive Debug runs.
+- Five consecutive Release runs.
+- Sequentially, in fresh isolated processes.
+
+A run passes only when:
+- Expected test actions complete.
+- Required artifacts are produced by this run.
+- The process exits normally with the expected success code.
+- No unhandled exception is recorded.
+- No test child process remains running.
+
+Use per-run identifiers to reject stale reports or screenshots.
+
+A screenshot or PASS JSON written before shutdown is not enough.
+The parent test runner must observe the final process exit.
+
+A timeout or forced termination is FAIL.
+
+If no safe UI test path exists, inspect whether a minimal test-only harness
+can be added in the working copy without changing production acquisition.
+
+Do not introduce a silent fake-hardware fallback.
+If offline safety cannot be established, report the relevant test as
+NOT TESTED and explain the blocker.
+
+
+==================================================
+8. Minimal fixes allowed during environment acceptance
+==================================================
+
+This phase may correct, in the working copy only:
+- Portable path/deployment issues.
+- Environment/build/test script defects.
+- Small, clearly isolated offline test-harness defects.
+
+A previously encountered failure pattern was:
+A WPF smoke harness lacked a running Dispatcher event loop, and an
+asynchronous continuation called Window.Close from a worker thread.
+
+This is a known pattern to check, not a predetermined diagnosis.
+If the supplied template already contains the fix, verify it; do not reapply
+or rewrite it unnecessarily.
+
+For an actual failure:
+1. Preserve the original logs and exit code.
+2. Capture the exception type, message, stack, and source location.
+3. Identify the calling thread and the owner of the affected UI object.
+4. Establish whether the defect is test-only or in shared production code.
+5. Apply the smallest permitted fix.
+6. Rerun affected tests and the full required acceptance.
+
+UI-affine test operations must run on the owning Dispatcher.
+The test must allow the real WPF event loop to run.
+Observe window closure, application exit, and final process termination
+without creating a circular wait.
+
+Do not:
+- Catch and ignore the exception.
+- Force Environment.Exit(0) to hide a broken shutdown.
+- Remove smoke testing from acceptance.
+- Use arbitrary extra sleeps as a substitute for synchronization.
+- Disable verification flags.
+- Report PASS before process exit.
+
+If resolution requires changes to shared acquisition, native ABI,
+hardware shutdown semantics, or substantive production behavior:
+Stop that modification and report it as a separate blocker.
+Do not expand this environment task into a core rewrite.
+
+Store all repair patches and evidence under Environment.
+
+
+==================================================
+9. Hardware readiness is separate
+==================================================
+
+Inspect supplied driver materials statically, if present:
+- Official installers.
+- INF/SYS/CAT files.
+- Installation instructions.
+- Expected hardware identifiers.
+
+Do not install or execute them in this phase.
+
+The absence of a driver must not be confused with a managed build failure.
+
+Do not test hardware by calling Initialize.
+Do not change:
+- Drivers.
+- Secure Boot.
+- Test-signing.
+- Memory Integrity.
+- BIOS.
+- FPGA firmware.
+
+Report:
+
+Hardware Ready: NOT TESTED
+
+Then list any missing official driver package or future hardware prerequisites.
+
+Even when a driver appears installed, do not claim that hardware has been validated.
+
+
+==================================================
+10. Reusable environment tools
+==================================================
+
+Create or update these tools under Environment.
+Preserve existing useful implementations instead of duplicating them.
+
+Check-Environment.ps1
+- Read-only checks; no installation or hardware calls.
+- Support optional -WorkspaceRoot.
+- Default workspace root to the parent of Environment.
+- Support -VerifyDeployment.
+- Support -RequireOfflineAcceptance.
+- Return nonzero if required checks fail or acceptance is missing/stale.
+
+Install-Prerequisites.ps1
+- Produce an installation plan by default.
+- Require explicit -Apply to install.
+- Install only approved, actually missing prerequisites.
+- Be idempotent.
+- Use official sources.
+- Do not automatically reboot.
+
+Build-Baseline.ps1
+- Support workspace/SDK path configuration.
+- Build the selected managed working copy.
+- Support Debug, Release, or both.
+- Record actual commands and exit codes.
+- Do not run hardware.
+
+Test-Offline.ps1
+- Run audited hardware-free tests.
+- Wait for real process exit.
+- Preserve failures and per-run evidence.
+- Produce acceptance linked to the tested source and deployment.
+
+Acceptance must be associated with:
+- The selected source/project identity.
+- Relevant build/test scripts and configuration.
+- SDK and deployment hashes.
+- Build configuration.
+- Test run IDs and exit results.
+
+If source, SDK, relevant scripts, or output changes:
+Do not reuse stale acceptance as current PASS.
+
+Do not embed credentials in scripts, reports, or exported logs.
+
+
+==================================================
+11. Verified Development Template and reports
+==================================================
+
+After successful acceptance, designate the tested working copy as:
+
+Verified Development Template
+
+The later DemoApp task must use this verified working copy, including
+any documented fixes—not the untouched original if it still has a defect.
+
+Create/update:
+
+Environment-Report.md
+- Original source and SDK locations.
+- Working-copy project path.
+- Toolchain and dependency versions.
+- Installed items, if any.
+- Portability or harness fixes.
+- Actual build/test/deployment results.
+- Original-source integrity comparison.
+- Current display resolution, scaling, and test window size.
+- Limitations and remaining blockers.
+- Verified Development Template path.
+
+Verified-Template.json
+- Explicit verified/unverified status.
+- Workspace-relative template/project/SDK paths where practical.
+- Source identity/hash information with a defined scope.
+- SDK/profile/deployment identity.
+- Acceptance run IDs and report paths.
+- Applied patch records.
+- Verification timestamp.
+
+Do not write a verified status unless required acceptance actually passes.
+
+Store raw logs, test results, manifests, screenshots, and patches in
+clearly identified report/run folders.
+
+Record the current recording/display environment.
+Do not change resolution or DPI automatically.
+An undecided future recording layout is not, by itself, a build blocker.
+
+Do not implement DemoApp or change the example’s visual design.
+
+
+==================================================
+12. Final strict preflight and delivery
+==================================================
+
+Run the generated strict preflight using the actual compatible PowerShell:
+
+Check-Environment.ps1 -VerifyDeployment -RequireOfflineAcceptance
+
+Provide the exact runnable command for this machine,
+including its working-directory assumption or explicit workspace argument.
+
+Keep both verification switches.
+
+Expected successful result:
+
+Build Ready: PASS
+Offline UI Ready: PASS
+Hardware Ready: NOT TESTED
+
+The strict preflight must exit with code 0 only when its required
+build/deployment/offline acceptance conditions are satisfied.
+
+Do not treat FAIL or NOT TESTED as PASS.
+If acceptance is blocked, retain the working copy and evidence and report
+the remaining issue precisely.
+
+Finally report:
+1. Detected source project and SDK.
+2. Dependencies found and installed.
+3. Working-copy path.
+4. Debug/Release results.
+5. Functional/ABI test results.
+6. Debug 5/5 and Release 5/5 smoke-test results, or actual failures.
+7. Normal offline launch/close result.
+8. Deployment and original-source integrity results.
+9. Repairs and their scope, if any.
+10. Verified Development Template path, only if verified.
+11. Strict preflight command and exit code.
+12. Remaining blockers and future hardware requirements.
+
+Complete preparation where possible, then stop.
+
+Do not create DemoApp.
+Do not redesign the UI.
+Do not operate hardware.

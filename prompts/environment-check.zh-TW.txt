@@ -1,0 +1,597 @@
+請準備並驗證這台電腦的開發環境，供後續錄影時建立 HMM DemoApp 使用。
+
+目前工作區已放好：
+- 完整 CoreSYSAPI／SYS CORE API 套件，資料夾也可能叫「HMM Sys」。
+- 最新完整 Managed Example code，資料夾也可能叫
+  「Example code」或「example code_managed」。
+
+以目前工作區實際找到的資料夾與專案檔為準。
+不要假定其他電腦的使用者名稱、桌面路徑或 SDK 位置。
+
+這次任務是：
+
+辨識提供的專案與 SDK
+→ 檢查開發環境
+→ 補齊必要依賴
+→ 建立獨立的環境工作副本
+→ 建置既有程式
+→ 完成離線驗證
+→ 必要時做範圍受限的最小修復
+→ 產出 Verified Development Template。
+
+這次不是：
+- 建立或重新設計 DemoApp。
+- 修改儀器操作介面。
+- 重寫 acquisition 或影像處理。
+- 測試硬體。
+
+除非遇到真正需要使用者提供資料或批准的 blocker，
+否則持續完成環境建置與驗證，不要只列出套件清單就停止。
+
+全程不要操作硬體。
+
+
+==================================================
+1. 辨識真正的專案與 SDK
+==================================================
+
+先閱讀目前工作區適用的專案指引。
+
+找到：
+- 最新 Managed .csproj 及必要的 ProjectReference。
+- 對應的 .sln，如果有。
+- global.json。
+- Directory.Build.props／Directory.Build.targets。
+- Directory.Packages.props。
+- NuGet.Config、packages.lock.json，如果有。
+- 建置與測試腳本。
+- SDK 部署設定。
+- SDK profile／hash verification 檔案。
+- 離線測試入口。
+- 最新實作文件。
+
+完整 Managed example 是應用程式基準。
+CoreSYSAPI 套件提供其 native SDK 與相關檔案。
+
+不要混淆：
+- 舊 Native C++ project。
+- 原廠 console sample。
+- 只有 EXE 的部署資料夾。
+- 歷史 source snapshot。
+
+根據實際專案、最新文件、功能與版本紀錄辨識來源，
+不要只看檔案日期。
+
+若完成比對後仍有多份無法區分的候選，
+才請使用者指定。
+
+記錄：
+- Source project 路徑。
+- Project references。
+- TargetFramework。
+- UseWPF 或實際 UI framework 設定。
+- PlatformTarget、RuntimeIdentifier。
+- Framework-dependent／self-contained 設定。
+- SDK 選擇規則。
+- 已宣告的套件與版本。
+- SDK package root、選定 profile。
+- 可用的離線測試。
+
+若 Environment 已有驗證過的工作副本與報告，
+先確認其身分與有效性，再決定是否建立新副本。
+不要自動覆蓋先前修復過的成果。
+
+
+==================================================
+2. 保護原始檔案
+==================================================
+
+在目前工作區建立或沿用：
+
+Environment/
+  work/
+  reports/
+  patches/
+  Check-Environment.ps1
+  Install-Prerequisites.ps1
+  Build-Baseline.ps1
+  Test-Offline.ps1
+  Environment-Report.md
+  Verified-Template.json
+
+提供的 example 與 CoreSYSAPI 資料夾均視為唯讀來源。
+
+修改前：
+- 建立原始檔案清單與 SHA-256 manifest。
+- 記錄清單涵蓋的範圍。
+- 原始來源掃描不得把新產生的 Environment 區域算進去。
+- 明確處理 symbolic link／junction，
+  不要遞迴追進無關資料夾。
+
+在 Environment/work 下建立獨立 Managed project 工作副本。
+
+包含必要的 source、resources、project references、scripts、tests。
+避免複製不必要的 bin／obj／.vs、歷史 logs、crash dumps。
+
+不要：
+- 修改原始 source 或 SDK。
+- 刪除未知檔案。
+- 覆蓋含有未審查修改的既存工作副本。
+- 為了接受不同 DLL 而重新產生已核准的 SDK hashes。
+
+所有允許的工作副本修改都要另行記錄。
+
+
+==================================================
+3. 盤點目前環境
+==================================================
+
+這個 Windows 應用程式使用 Windows 原生執行環境。
+
+檢查：
+- Windows 版本與作業系統架構。
+- 目前 process architecture。
+- PowerShell executable 路徑與版本。
+- dotnet executable 路徑。
+- dotnet --info。
+- dotnet --list-sdks。
+- dotnet --list-runtimes。
+- 從實際專案目錄執行時，真正選中的 SDK。
+- 必要 Desktop／Runtime 元件。
+- Native DLL runtime dependencies。
+- 建置／測試腳本實際使用的工具。
+- 需要 restore 時的 NuGet sources 與連線。
+- work、output、logs、reports 的寫入權限。
+
+依實際專案判斷需求，
+不要從舊報告硬寫死某個 .NET 版本。
+
+對預期的 x64 Managed application：
+確認所選 build/runtime 路徑與 x64 native SDK 相容。
+
+不能因為現成 EXE 可以啟動，
+就認定電腦已安裝可用的 compiler／SDK。
+
+直接建置 Managed project 與必要 references。
+不要因同一個 solution 保留舊 Native C++ project，
+就要求該 C++ project 也必須編譯成功。
+
+除非選定專案真的需要，
+不要安裝 MSVC、Boost、Qt、MFC、WinUI 或整套 Visual Studio。
+
+Native dependencies 優先使用靜態檢查。
+不要為了檢查 exports 或 dependencies，
+就載入或執行 HMM native DLL。
+
+
+==================================================
+4. 只安裝真正缺少的必要依賴
+==================================================
+
+建立明確的 prerequisite plan。
+
+每個缺項都要說明：
+- 為什麼目前專案需要。
+- 所需版本或相容性依據。
+- 是否其實已安裝，只是目前 PATH 找不到。
+- 官方安裝來源。
+- 安裝範圍與是否需要管理員權限。
+
+可能需要檢查的項目：
+- 相容的 .NET SDK。
+- 必要 Desktop／Runtime 元件。
+- Native DLL imports 所需的相容 x64 Visual C++ Runtime。
+- 既有腳本明確要求的工具。
+- 專案已宣告的套件。
+
+這是待核對項目，不是要求全部安裝。
+
+优先使用已存在且相容的 installation。
+實際 executable path 記在本機環境紀錄中，
+不要把別台電腦的私人 tool-cache 路徑寫死到可攜腳本。
+
+可以 restore 專案原本已宣告的套件。
+需要系統安裝或 elevated action 時，
+集中列出需求並取得批准，再繼續執行。
+
+不要：
+- 升級 TargetFramework 或套件 major version。
+- 切換 SDK profile 或 native DLL 版本。
+- 安裝無關工具。
+- 不必要地修改 global PATH。
+- 修改全機安全設定或 execution policy。
+- 自動重新開機。
+
+只使用官方來源。
+不得繞過登入、下載安全或安裝權限。
+
+若所需版本無法取得或不相容，
+回報具體 blocker，不要默默升級整個 application。
+
+
+==================================================
+5. 讓工作副本具備可攜性
+==================================================
+
+檢查 source、project、build、deployment 設定中的舊絕對路徑。
+
+依用途改為：
+- Workspace-relative。
+- Project-relative。
+- 明確的 SDK root parameter。
+- Deployment-directory-relative。
+
+優先使用既有配置機制。
+若沒有，僅在工作副本做最小路徑修正。
+
+清楚區分：
+- Original SDK source。
+- Selected SDK profile。
+- Deployed runtime files。
+- Generated application output。
+
+不要混用不同 SDK package 的 DLL、JSON、data。
+
+保留既有 approved-profile 與 hash checks。
+Unknown profile 可以盤點，但不能自動批准。
+
+不要修改：
+- P/Invoke signatures 或 struct layouts。
+- SDK DLL／header／data 內容。
+- Acquisition lifecycle。
+- Averaging 或 Composite 演算法。
+- Scanner timing formulas。
+
+不要自行補造缺少的 SDK header，
+也不要從無關版本複製 ABI declaration。
+
+所有可攜性修改都要留下 diff 或 patch。
+
+
+==================================================
+6. Restore、建置與部署核對
+==================================================
+
+執行之前先閱讀既有 build scripts。
+
+確認它們是否會：
+- 啟動 application。
+- 執行硬體測試。
+- 呼叫 HMM API。
+- 安裝 driver。
+- 修改 registry。
+- 更新 firmware。
+
+只使用已確認不操作硬體的路徑。
+必要時直接針對 Managed project 執行 build。
+
+Restore 已宣告的 dependencies，
+不要任意改版本。
+
+若已有有效的 packages.lock.json：
+依專案適用的 locked-restore policy 執行。
+不要為了隱藏版本不符而重新產生 lock file。
+
+建置：
+- Debug x64。
+- Release x64。
+
+維持既有 framework 與 deployment model。
+不要要求改成新的 self-contained 或 single-file 發布方式。
+
+記錄：
+- Working directory。
+- 實際 executable 與工具版本。
+- 完整命令。
+- 開始／結束時間。
+- Exit code。
+- stdout／stderr 與建置紀錄。
+
+目標為 0 warnings、0 errors。
+不得透過全域關閉 warning 或移除檢查達成。
+仍存在的 warnings 必須如實列出。
+
+確認本次執行真的產生預期 artifacts。
+Output 目錄原本就有 EXE，不代表本次 build 成功。
+
+依選定 package/profile 核對實際需要的部署檔案，例如：
+- HMMSysCoreAPILib.dll。
+- DataInsightLib.dll。
+- io_settings.json。
+- 完整必要 data folder。
+- Profile manifests。
+- Managed assemblies 與 runtime metadata。
+- 其他必要 resources／dependencies。
+
+不要硬寫死歷史檔案數量。
+
+確認 deployment 不依賴舊 source directory，
+也不需要從特定 Terminal current directory 才能工作。
+
+Dependency／deployment 檢查不得執行 HMM 硬體 API。
+
+
+==================================================
+7. 離線測試與 UI 開啟／關閉驗證
+==================================================
+
+先讀測試入口，再執行。
+
+離線測試不得呼叫：
+- initialize。
+- setParameters。
+- startScan。
+- stopScan。
+- Callback registration APIs。
+- AO、laser、stage、firmware 操作。
+- 其他 native HMM 硬體 API。
+
+這項限制涵蓋：
+startup、test execution、error recovery、shutdown，
+不只是禁止按 UI 按鈕。
+
+執行現有、不碰硬體的功能及 ABI 測試。
+可能包含：
+- Struct layout。
+- Geometry／timing calculation。
+- Frame assembly。
+- Averaging。
+- Composite。
+- State handling。
+- Logging／deployment。
+
+以實際可用測試為準。
+不要捏造測試，也不要複製歷史測試數量。
+
+驗證正常 Release UI 的離線開啟與關閉。
+
+執行既有 --ui-smoke 或文件記載的等價入口：
+- Debug 連續 5 次。
+- Release 連續 5 次。
+- 依序執行，每次使用新的獨立 process。
+
+每次 PASS 必須同時滿足：
+- 預期測試動作完成。
+- 本次真正產生必要 artifacts。
+- Process 正常結束，exit code 符合成功條件。
+- 沒有 unhandled exception。
+- 沒有殘留 test child process。
+
+每次使用獨立 run ID，
+避免舊報告或舊 screenshot 被當成本次成果。
+
+Shutdown 前產生 screenshot 或 PASS JSON 不算完整通過。
+外層 test runner 必須確認最後的 process exit。
+
+Timeout 或強制終止都必須記為 FAIL。
+
+若沒有安全的 UI test path，
+先確認能否只在工作副本加入最小 test-only harness，
+且不改 production acquisition。
+
+不要新增默默使用的 fake-hardware fallback。
+若無法確認離線安全，
+將該測試標為 NOT TESTED，並說明 blocker。
+
+
+==================================================
+8. 環境驗收允許的最小修復
+==================================================
+
+本階段可以只在工作副本修正：
+- 可攜路徑／部署問題。
+- Environment／build／test script 缺陷。
+- 範圍明確、容易隔離的小型離線 test-harness 缺陷。
+
+過去遇過的失敗模式是：
+WPF smoke harness 沒有啟動 Dispatcher event loop，
+非同步 continuation 在 worker thread 呼叫 Window.Close。
+
+這只是已知檢查方向，不是預先指定的根因。
+如果提供的模板已包含修復，
+只需驗證，不要重複套用或不必要地重寫。
+
+實際發生失敗時：
+1. 保留原始 logs 與 exit code。
+2. 記錄 exception type、message、stack、source location。
+3. 確认 calling thread 與 UI object owner。
+4. 區分 test-only 缺陷或 shared production code 問題。
+5. 套用範圍允許的最小修正。
+6. 重跑受影響測試與完整必要驗收。
+
+UI-affine 測試操作必須在所屬 Dispatcher 執行。
+測試必須讓真正的 WPF event loop 運行。
+確認 Window Closed、Application exit、最後 process exit，
+不要製造互相等待的 deadlock。
+
+不要：
+- Catch 後直接忽略例外。
+- 用 Environment.Exit(0) 隱藏 shutdown 失敗。
+- 把 smoke test 從驗收移除。
+- 用任意加長 sleep 取代同步修復。
+- 移除驗證 switches。
+- 在 process exit 前宣布 PASS。
+
+若必須修改 shared acquisition、native ABI、
+硬體關閉語意或實質 production 行為才能解決：
+先停止該修改，列為獨立 blocker。
+不要把環境任務擴大成核心程式重寫。
+
+修復 patch 與證據均保存在 Environment 下。
+
+
+==================================================
+9. 硬體就緒狀態分開處理
+==================================================
+
+若資料夾有正式 driver 資料，可以靜態檢查：
+- Official installer。
+- INF／SYS／CAT。
+- 安裝文件。
+- 預期 hardware identifiers。
+
+本階段不安裝、不執行。
+
+沒有 driver 不等於 Managed build 失敗。
+
+不要透過呼叫 Initialize 來測硬體。
+不要修改：
+- Drivers。
+- Secure Boot。
+- Test-signing。
+- Memory Integrity。
+- BIOS。
+- FPGA firmware。
+
+回報：
+
+Hardware Ready: NOT TESTED
+
+並列出缺少的正式 driver package，
+或未來硬體測試需要的條件。
+
+即使看起來已安裝 driver，
+也不得宣稱硬體已驗證。
+
+
+==================================================
+10. 可重複使用的環境工具
+==================================================
+
+在 Environment 下建立或更新以下工具。
+優先沿用已有的正確實作，不要重複做另一套。
+
+Check-Environment.ps1
+- 只檢查，不安裝、不呼叫硬體。
+- 支援選填 -WorkspaceRoot。
+- 預設 workspace root 為 Environment 的上一層。
+- 支援 -VerifyDeployment。
+- 支援 -RequireOfflineAcceptance。
+- 必要檢查失敗、驗收缺失或過期時，回傳非零 exit code。
+
+Install-Prerequisites.ps1
+- 預設只產生安裝計畫。
+- 明確指定 -Apply 才安裝。
+- 只安裝已批准且真正缺少的 prerequisites。
+- 可重複執行，已滿足者跳過。
+- 使用官方來源。
+- 不自動重新開機。
+
+Build-Baseline.ps1
+- 支援 workspace／SDK path 配置。
+- 建置選定的 Managed 工作副本。
+- 支援 Debug、Release 或兩者。
+- 記錄實際命令與 exit code。
+- 不操作硬體。
+
+Test-Offline.ps1
+- 執行已確認安全的離線測試。
+- 等待真正的 process exit。
+- 保留失敗及每次執行證據。
+- 產生與測試 source／deployment 對應的 acceptance。
+
+Acceptance 必須綁定：
+- 選定 source／project identity。
+- 相關 build／test scripts 與設定。
+- SDK／deployment hashes。
+- Build configuration。
+- Test run IDs、exit results。
+
+Source、SDK、相關 scripts 或 output 改變後：
+不能把過期 acceptance 當成目前 PASS。
+
+Scripts、reports、exported logs 不得包含 credentials。
+
+
+==================================================
+11. Verified Development Template 與報告
+==================================================
+
+驗收通過後，將受測工作副本指定為：
+
+Verified Development Template
+
+後續 DemoApp 必須使用這份包含已記錄修復的工作副本，
+不能在原始模板仍有缺陷時又複製回原始版本。
+
+建立／更新：
+
+Environment-Report.md
+- Original source 與 SDK 位置。
+- Working-copy project 路徑。
+- Toolchain／dependency versions。
+- 本輪安裝項目，如果有。
+- Portability／harness fixes。
+- 實際 build／test／deployment results。
+- 原始來源完整性比較。
+- 目前螢幕解析度、縮放、測試視窗尺寸。
+- 限制與剩餘 blocker。
+- Verified Development Template 路徑。
+
+Verified-Template.json
+- 明確的 verified／unverified 狀態。
+- 儘可能使用 workspace-relative 的 template／project／SDK 路徑。
+- 有明確範圍的 source identity／hash。
+- SDK／profile／deployment identity。
+- Acceptance run IDs、report paths。
+- Applied patch records。
+- Verification timestamp。
+
+未實際通過必要驗收時，不得寫入 verified 狀態。
+
+原始 logs、test results、manifests、screenshots、patches
+放在清楚區分的 report／run 資料夾。
+
+記錄目前錄影／顯示環境。
+不要自動修改解析度或 DPI。
+尚未決定未來錄影布局，本身不算 build blocker。
+
+不要實作 DemoApp，也不要修改 example 的視覺設計。
+
+
+==================================================
+12. 最後嚴格 preflight 與交付
+==================================================
+
+使用實際可用且相容的 PowerShell，
+執行產生的嚴格 preflight：
+
+Check-Environment.ps1 -VerifyDeployment -RequireOfflineAcceptance
+
+交付這台電腦可以直接執行的完整命令，
+說明 working directory，或提供明確 workspace argument。
+
+兩個驗證 switches 都要保留。
+
+成功時預期：
+
+Build Ready: PASS
+Offline UI Ready: PASS
+Hardware Ready: NOT TESTED
+
+只有必要 build／deployment／offline acceptance 都滿足時，
+嚴格 preflight 才能回傳 exit code 0。
+
+不得把 FAIL 或 NOT TESTED 當成 PASS。
+若验收有 blocker，
+保留工作副本與證據，精確回報剩餘問題。
+
+最後回報：
+1. 找到的 source project 與 SDK。
+2. 已存在及本輪安裝的 dependencies。
+3. Working-copy 路徑。
+4. Debug／Release 結果。
+5. 功能／ABI 測試結果。
+6. Debug 5/5、Release 5/5 smoke 結果，或實際失敗。
+7. 正常離線開啟／關閉結果。
+8. Deployment 與原始來源完整性結果。
+9. 修復內容及範圍，如果有。
+10. Verified Development Template 路徑，僅在驗證通過時指定。
+11. 嚴格 preflight 命令與 exit code。
+12. 剩餘 blocker 與未來硬體需求。
+
+能完成的準備與驗證持續完成，之後停止。
+
+不要建立 DemoApp。
+不要重新設計 UI。
+不要操作硬體。

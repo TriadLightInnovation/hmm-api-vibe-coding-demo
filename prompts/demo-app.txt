@@ -1,0 +1,1057 @@
+PUBLIC REPLAY NOTE
+Replace <WORKSPACE> with the absolute path of your own development workspace.
+Run the environment-preparation prompt first. The environment report, verification
+tools, repair evidence, and verified working copy are outputs of that stage;
+they are not bundled acceptance records in this repository. The supplied
+managed-example source is a reference snapshot, not the final DemoApp source.
+
+Build an independent, executable C# instrument-control application:
+
+HMM_DemoApp
+
+Use the verified, repaired version of the latest managed example as the development template.
+
+Workspace:
+
+<WORKSPACE>
+
+The workspace contains:
+- HMM Sys: the supplied SYS CORE API / SDK package.
+- example code_managed: the original supplied managed example.
+- Environment: environment reports, verification tools, and the working copy used for environment acceptance.
+
+IMPORTANT:
+The original example previously had a cross-thread exception during
+--ui-smoke shutdown.
+
+Do not assume the untouched original example is the correct source.
+First identify and verify the repaired development template described below.
+
+This is a recorded development demonstration.
+
+The task is:
+Preserve the latest example’s existing core functionality, reorganize the UI,
+and complete the build, offline verification, visual inspection, and deployment.
+
+This is NOT:
+Reimplementing the acquisition application from API names or header files.
+
+Complete the workflow autonomously:
+
+Verify the development template
+→ Create an independent project
+→ Implement the new UI
+→ Build
+→ Run offline tests
+→ Inspect rendered screenshots
+→ Correct problems
+→ Deliver the Release executable and complete deployment folder.
+
+Unless there is a genuine blocker, do not stop after producing a plan,
+and do not request confirmation after every small step.
+
+Do not automatically operate hardware.
+
+
+==================================================
+1. Mandatory source selection: Verified Development Template
+==================================================
+
+Read this report first:
+
+<WORKSPACE>\Environment\Environment-Report.md
+
+Also inspect the associated repair evidence, if referenced or present:
+
+- UI-SMOKE-FIX.md.
+- The shutdown-fix patch or equivalent source-change record.
+- Source identity / hash records.
+- Current offline acceptance results.
+- Smoke-test process exit results.
+
+Find the project explicitly designated as:
+
+Verified Development Template
+
+The last reported environment working-copy location was:
+
+<WORKSPACE>\Environment\work\HMM_FPGA_UI_Example.Managed
+
+Treat this as a candidate location, not automatic proof of verification.
+The current report and the actual files must confirm the source.
+
+Before selecting the template, verify:
+
+1. The project exists and contains the complete required source.
+2. The original --ui-smoke shutdown defect has a documented correction.
+3. The documented correction is present in the selected source.
+4. The acceptance results correspond to this source version.
+5. Normal offline launch/close and --ui-smoke have successful results.
+6. A successful smoke test includes normal process exit, not just a
+   screenshot or a PASS file written before shutdown.
+
+Do not select the untouched original example merely because:
+- Its directory name looks like the main reference.
+- It is closer to the workspace root.
+- It has a newer file timestamp.
+- It already contains an EXE.
+
+Source authority:
+
+A. Environment-Report.md identifies the verified development template
+   and its associated SDK source.
+
+B. The selected template’s actual source, project settings, and tests
+   define the functionality to preserve.
+
+C. This prompt defines the new UI layout and appearance.
+
+D. Historical reports are background information only.
+
+If the verified template cannot be identified, or the shutdown repair is
+still unverified:
+- Report the exact blocker.
+- Do not silently fall back to the defective original.
+- Do not label a failing baseline as verified.
+- Do not bypass offline acceptance to begin the redesign.
+
+Do not modify the Environment report to turn a failure into a pass.
+
+The environment repair is a prerequisite for this recorded UI task.
+Do not silently fold an unresolved baseline-repair project into the UI redesign.
+
+
+==================================================
+2. Strict environment preflight
+==================================================
+
+Use the existing environment verification tools.
+
+The previously supplied strict preflight command is:
+
+pwsh -NoProfile -File '<WORKSPACE>\Environment\Check-Environment.ps1' -VerifyDeployment -RequireOfflineAcceptance
+
+Preserve both switches:
+
+-VerifyDeployment
+-RequireOfflineAcceptance
+
+If the PowerShell executable path has changed:
+- Resolve an existing compatible PowerShell executable.
+- Record the actual path and command.
+- Do not remove verification flags to obtain success.
+
+Check the actual project requirements:
+- Windows and process architecture.
+- .NET SDK and runtime selection.
+- global.json.
+- TargetFramework.
+- RuntimeIdentifier.
+- NuGet dependencies.
+- Build-script tools.
+- Native DLL runtime dependencies.
+- SDK deployment paths.
+
+Use the existing installed environment when sufficient.
+
+Do not perform unnecessary installation or upgrades.
+Do not upgrade .NET, SDK DLLs, or NuGet major versions during this task.
+
+If a necessary dependency is missing, identify it precisely and request
+approval where system installation permissions are required.
+
+The absence of a hardware driver must remain a separate status:
+
+Hardware Ready: NOT TESTED
+
+It must not be represented as hardware readiness.
+It does not, by itself, prevent managed builds and genuinely offline tests.
+
+Do not modify:
+- Device drivers.
+- Secure Boot.
+- Windows test-signing settings.
+- Memory Integrity.
+- BIOS settings.
+- FPGA firmware.
+- System security settings.
+
+
+==================================================
+3. Independent project and source protection
+==================================================
+
+Create:
+
+<WORKSPACE>\HMM_DemoApp
+
+Keep all of the following unchanged:
+- The original supplied example.
+- The original HMM Sys package.
+- The Verified Development Template.
+- Existing environment repair evidence.
+
+Create HMM_DemoApp as an independent copy of the verified template.
+
+If HMM_DemoApp already exists:
+- Inspect it first.
+- Do not overwrite an unrelated project.
+- Do not delete unknown work.
+- Continue only if it is clearly the unfinished project for this task.
+
+Include the necessary:
+- Managed source.
+- XAML.
+- Resources.
+- Project references.
+- Build properties.
+- Deployment scripts.
+- Offline tests.
+- Verified smoke-test/shutdown correction.
+
+Avoid copying unnecessary:
+- bin.
+- obj.
+- .vs.
+- Large historical logs.
+- Crash dumps.
+
+Preserve the template’s actual:
+- C# / WPF architecture.
+- TargetFramework.
+- x64 configuration.
+- RuntimeIdentifier.
+- Dependencies.
+- SDK integration.
+
+Do not switch to WinUI, Qt, or another framework to imitate ScanFluow.
+
+Do not rebuild the native C++ sample merely because it is present.
+Do not build an old .vcxproj merely because it remains in a solution.
+Build only the managed application and its required references.
+
+First build the copied baseline before making visual changes.
+
+Use the new application identity:
+
+Assembly / executable name:
+HMM_DemoApp
+
+Executable:
+HMM_DemoApp.exe
+
+Avoid unnecessary namespace-wide renaming or core refactoring.
+Make only the changes required for an independent application and the
+requested interface.
+
+Remove obsolete absolute-path dependencies from the new project.
+Do not rely on Paz Z2’s username, Desktop path, or working directory.
+
+Record:
+- The selected template path and identity.
+- The SDK package/profile.
+- The verified repair being carried forward.
+- The core modules being reused.
+
+Then continue implementation without waiting for approval of this inventory.
+
+
+==================================================
+4. Main window: three primary regions
+==================================================
+
+Use this layout:
+
++------------------------+------------------------------------------+
+|                        |                                          |
+|  1. Parameters         |  2. Image display                         |
+|     and settings       |                                          |
+|                        |  [ 4 CH Display ] [ Composite ]          |
+|  Narrow upper-left     |                                          |
+|  control column        |  4 CH tab:                               |
+|                        |        CH1              CH2               |
+|  Trigger / Geometry    |        CH3              CH4               |
+|  Frequency / Average   |                                          |
+|  Composite settings    |  Composite tab:                          |
+|  Scan controls         |        One large color image             |
+|                        |                                          |
++------------------------+------------------------------------------+
+|              Draggable horizontal splitter                        |
++-------------------------------------------------------------------+
+|  3. Returned messages and data                                     |
+|  [ Messages ] [ Data ]                                            |
+|  Scrollable content with scrollbars                               |
++-------------------------------------------------------------------+
+
+Do not retain the previous arrangement that displayed all four grayscale
+images and a fifth Composite image simultaneously.
+
+Initial proportions:
+- Upper settings/image area: approximately 75–80% of available height.
+- Lower messages/data area: approximately 20–25%.
+- Upper-left settings column: narrow, with constrained width.
+- Upper-right image area: remaining width and the largest region.
+
+Suggested initial settings-column width:
+Approximately 300–340 DIP.
+
+Adjust as needed for readable controls and the available working area.
+Do not force inputs and labels into a width that clips them.
+
+Provide:
+- A vertical splitter between settings and images.
+- A horizontal splitter above the lower messages/data area.
+
+The horizontal splitter is required.
+
+Use reasonable minimum dimensions so a splitter cannot make an area unusable.
+
+Do not put the entire main window inside one ScrollViewer.
+Settings and messages/data must scroll independently.
+The image area must receive a bounded layout size.
+
+The initial window must fit inside the current monitor’s working area.
+Do not assume a fixed resolution or DPI for every computer.
+
+
+==================================================
+5. Visual style: black background with green accents
+==================================================
+
+Use ScanFluow’s black-background, green-accent appearance as the visual direction.
+
+If usable ScanFluow screenshots or theme resources are present, use them
+as a visual reference only.
+
+Do not import ScanFluow’s:
+- SDK wrapper.
+- Application configuration files.
+- WinUI application architecture.
+- Additional dependencies.
+
+If no exact palette is available, use:
+
+Window background:  #0D1114
+Panel background:   #171D21
+Input background:   #20282D
+Borders/dividers:   #344148
+Primary text:       #E6EDF0
+Secondary text:     #A7B5BD
+Green accent:       #36C981
+Image background:   #000000
+
+Use green for:
+- Selected tabs.
+- Checked controls and active slider states.
+- Primary action buttons.
+- Ready/normal status indications.
+- Focus and selection accents.
+
+Do not make all text and borders green.
+
+Errors and warnings must have clear text and distinguishable styling.
+Do not rely on color alone for Stop, warning, or error meaning.
+
+Style all relevant controls consistently:
+- Buttons.
+- TextBoxes.
+- ComboBoxes.
+- CheckBoxes.
+- Sliders.
+- TabControls.
+- ScrollBars.
+- DataGrids.
+- Tooltips.
+- Context menus.
+- Splitters.
+
+Inspect normal, hover, focused, selected, checked, disabled, and expanded states.
+
+Avoid unexpected white popups or unreadable foreground/background combinations.
+
+Centralize the theme in ResourceDictionary resources or equivalent shared styling.
+
+Use existing system fonts.
+Do not install fonts.
+
+Avoid decorative animation, glow, heavy shadows, and unrelated visual effects.
+
+
+==================================================
+6. Region 1: parameters and settings
+==================================================
+
+Use a narrow vertical control column with clear groups.
+
+Suggested order:
+
+A. Acquisition
+- External / Internal Trigger.
+- Necessary mode settings already present in the template.
+
+B. Geometry
+- X Pixel.
+- Y Pixel.
+- Oversample Pixel.
+- Oversample Frame.
+
+C. Scan / Preview
+- Internal fixed-position Frequency slider.
+- Current Frequency.
+- Dwell Time (µs).
+- Frame Time (ms).
+- Frame Rate (Hz).
+- Number Of Lines.
+- Live Preview Hz.
+
+D. Averaging
+- Line Average on/off.
+- Averaged line count.
+- Frame Average on/off.
+- Averaged frame count.
+
+E. Composite
+- Composite master on/off.
+- CH1 Include and Color/RGB.
+- CH2 Include and Color/RGB.
+- CH3 Include and Color/RGB.
+- CH4 Include and Color/RGB.
+
+F. Operations
+- Initialize.
+- Prepare.
+- Start Scan.
+- Stop Scan.
+- Scan Once.
+- Direct Start Test, if retained by the current template.
+
+Preserve the current template’s actual functionality, initial values, and restrictions.
+Do not add unrelated hardware controls.
+
+Keep the calculated timing summary compact, such as a two-column group.
+Do not create a separate timing panel beside the images.
+
+Internal Frequency:
+Use eight fixed positions:
+
+0 → 800 Hz
+1 → 400 Hz
+2 → 200 Hz
+3 → 100 Hz
+4 → 50 Hz
+5 → 20 Hz
+6 → 10 Hz
+7 → 5 Hz
+
+Snap to these positions.
+Do not interpolate.
+Do not add arbitrary numeric frequency entry.
+
+Mode switching must correctly show, hide, or disable mode-specific controls.
+It must not merely change labels while retaining the wrong control path.
+
+Place all Composite configuration in this left column.
+Do not create an additional settings region to the right of the images.
+
+The settings content must scroll vertically when needed.
+
+Prefer a fixed operation-button section at the bottom of the settings column,
+so Start and Stop remain accessible while settings are scrolled.
+
+Use a layout suitable for a narrow column, such as two-column button groups.
+
+Groups may be collapsible, but active settings must remain easy to understand.
+
+
+==================================================
+7. Region 2: image tabs
+==================================================
+
+Provide:
+
+[ 4 CH Display ]
+[ Composite ]
+
+Default:
+4 CH Display.
+
+4 CH Display:
+- CH1–CH4 in a 2×2 arrangement.
+- Four equal-sized square viewports.
+- Common side length based on available width and height.
+- Uniform image fit.
+- Black letterboxing for non-square images.
+- No forced pixel stretching.
+- Channel labels and necessary image-state labels.
+
+Composite:
+- One larger image in the same image region.
+- Square viewport and Uniform fit.
+- Settings controlled from the left column.
+- Use the available image area effectively.
+
+Both tabs must use the same acquisition and processing pipeline.
+
+Switching tabs must not:
+- Call HMM APIs.
+- Initialize, Prepare, Start, or Stop.
+- Register callbacks.
+- Reset averaging.
+- Clear acquisition buffers.
+- Reset sessions or counters.
+- Create duplicate timers or subscriptions.
+
+On selecting a tab:
+Display its latest valid processed source promptly.
+
+If no valid data exists:
+Show a clear placeholder.
+Do not present synthetic images as hardware-acquired data.
+
+Rendering and bitmap uploads for hidden tabs may be suspended.
+
+However, hiding a tab must not stop:
+- Acquisition.
+- Frame assembly.
+- Line averaging.
+- Frame averaging.
+- Complete-frame counting.
+- Required processed-source maintenance.
+
+For example, Composite RGB rendering may pause while hidden.
+When shown again, render from the latest processed channel sources.
+
+Preserve:
+- Internal progressive line display.
+- Progressive display of ready averaged lines during the Nth frame.
+- Progressive Composite behavior.
+
+Do not wait for a complete frame merely because the image is now hosted in a TabControl.
+
+
+==================================================
+8. Region 3: messages and data
+==================================================
+
+This area spans the full window width beneath the horizontal splitter.
+
+Provide:
+
+[ Messages ]
+[ Data ]
+
+Messages:
+- Application state changes.
+- Initialize / Prepare / Start / Stop result summaries.
+- SDK errors.
+- Input and deployment problems.
+- Relevant existing operation logs.
+- Timestamp, level, operation, and message.
+
+Data:
+- Active / Requested / Effective parameters.
+- SDK profile.
+- Per-channel callback, frame, and display counters.
+- Latest callback metadata.
+- Averaging progress.
+- Other diagnostic data already present in the template.
+
+Move the old right-side Parameters / Channels / Metadata information here.
+Do not delete its underlying functionality.
+
+Remove the old dedicated right-side API Timing display.
+Do not recreate a large permanent API-duration table elsewhere.
+
+Continue recording:
+- API durations.
+- Scan Once timing.
+- First Callback.
+- First Display.
+- First Complete Frame.
+
+Keep those records in Export Diagnostics.
+
+The calculated Dwell Time / Frame Time / Frame Rate in Region 1 remain visible.
+
+Provide scrollbars when content exceeds available space.
+
+Message scrolling:
+- Append new messages at the end.
+- Follow new messages when the user is already at the bottom.
+- Do not force a jump to the bottom while the user is reading history.
+- Provide Auto-scroll / Follow latest.
+- Wrap long messages or allow horizontal scrolling.
+- Do not make essential details permanently inaccessible through truncation.
+
+Preserve or provide suitable actions:
+- Copy selected.
+- Clear view.
+- Export Diagnostics.
+- Open log folder.
+
+Clear view affects only the on-screen message history.
+It must not delete persistent logs, reset acquisition counters, or alter hardware state.
+
+Use bounded history and/or virtualization.
+Do not allow an unbounded UI message collection.
+
+Do not append a text row for every acquisition callback.
+Refresh high-frequency values through throttled data fields.
+
+This lower messages/data area is explicitly requested.
+It replaces the earlier UI restriction against adding a visible message/log area.
+
+It does not change callback performance protections or disk-logging semantics.
+
+
+==================================================
+9. Preserve core acquisition and processing behavior
+==================================================
+
+Reuse the verified template’s core implementation.
+
+Do not redesign the following during this UI task:
+
+A. Acquisition lifecycle
+- External/Internal branches.
+- Callback registration timing.
+- Initialize / Prepare / Start / Stop.
+- Scan Once.
+- Reinitialization requirements.
+- Error recovery.
+- Session and generation handling.
+
+B. Geometry
+- Requested / Effective conversions.
+- Legal ranges.
+- Overflow checks.
+- Buffer-capacity validation.
+- Runtime overrides.
+
+Do not modify original SDK JSON files.
+
+C. Line Average
+Preserve Internal-only behavior:
+- External must not use Line Average.
+- Internal effective Y, Oversample Frame, and Number Of Lines
+  follow the current N-based conversion.
+- Processed lines update progressively when their averages are ready.
+- Do not add duplicate native and managed averaging.
+
+D. Frame Average
+Preserve non-overlapping batch behavior:
+- N=3: frames 123, then 456, then 789.
+- Not 123, then 234, then 345.
+- In Internal line mode, corresponding rows may display as soon as
+  their averages are ready during the Nth frame.
+- Preserve batch resets, validity tracking, and synchronization.
+
+E. Composite
+Preserve:
+- Master enable.
+- Per-channel Include.
+- Color/RGB.
+- Processed/averaged source selection.
+- Geometry checks.
+- Separation from acquisition channel enable.
+
+F. Scan Once
+Preserve the current template’s definition and completion barrier.
+Do not call native Stop directly from an SDK callback.
+Do not change the number of acquired frames merely for a different UI layout.
+
+G. Direct Start Test
+Preserve the current SDK hash/profile gate.
+
+Do not enable or disable it based on outdated history.
+Do not approve a DLL merely from its filename or folder label.
+Do not restore the removed Experimental section.
+
+If an approved test SDK is absent:
+Leave the gate active and continue the rest of the UI work.
+
+H. Timing
+Reuse the current timing calculator and its regression tests.
+Do not rederive full-cycle/half-cycle semantics or factor-of-two corrections.
+
+I. Dummy / Overscan
+Preserve the current retention/cropping policy and labels.
+Do not silently introduce cropping, resizing, or resampling.
+
+If source and current documentation materially conflict:
+Identify the exact files and locations.
+Do not silently replace the algorithm with an assumed interpretation.
+
+
+==================================================
+10. Control states, threading, and display performance
+==================================================
+
+Preserve the template’s state rules for acquisition-affecting settings:
+- Trigger mode.
+- Geometry.
+- Frequency.
+- Number Of Lines.
+- Line Average.
+
+Changes after Prepared must require Prepare again where the template requires it.
+Scanning-time restrictions must remain intact.
+Stop must return to the correct state.
+
+Pure display operations must not invalidate Prepare or write to the FPGA:
+- Image-tab selection.
+- Composite Include.
+- Color changes.
+- Message scrolling.
+- Splitter adjustment.
+
+Host-processing settings such as Frame Average must preserve the template’s
+safe reset behavior.
+
+Prevent duplicate clicks from starting concurrent operations.
+
+Preserve native-buffer ownership:
+- Copy required data while native pointers are valid.
+- Do not retain SDK pointers for later UI access.
+
+Do not execute inside SDK callbacks:
+- WPF updates.
+- MessageBox.
+- Composite rendering.
+- Large disk-log writes.
+- Waiting for the UI Dispatcher.
+
+Preserve:
+- Short locks.
+- Safe snapshots.
+- Bounded queues.
+- Generation checks.
+- Existing cancellation and cleanup behavior.
+
+The lower data area must read existing state.
+Do not call getFrequency or another hardware API merely to refresh the UI.
+
+Avoid:
+- Dispatcher.Invoke for every callback.
+- Duplicate event subscriptions.
+- A new timer on each tab change.
+- Unnecessary hidden-control rendering.
+- Unbounded message growth.
+- Long shared locks between acquisition and message display.
+
+Intermediate preview updates may be coalesced.
+Do not drop acquisition data needed by averaging.
+
+Do not describe skipped UI updates as FPGA acquisition loss.
+
+
+==================================================
+11. Preserve and regression-test the verified shutdown fix
+==================================================
+
+Carry forward the verified --ui-smoke correction and its tests.
+
+The new window layout must not reintroduce the original thread-affinity defect.
+
+Preserve relevant command-line offline test entry points, including
+--ui-smoke, unless a documented equivalent is necessary.
+
+Check:
+- Application startup.
+- Test entry-point routing.
+- Window closing and closed handlers.
+- Application shutdown.
+- Dispatcher ownership.
+- Timers and event cleanup.
+- Pending asynchronous test operations.
+- Process termination.
+
+Perform UI-affine operations on the Dispatcher that owns the relevant objects.
+
+Do not create a worker-thread Dispatcher and use it as a substitute
+for the application’s UI Dispatcher.
+
+Observe asynchronous test tasks and their exceptions.
+Avoid synchronous waits that can deadlock shutdown.
+
+A smoke test passes only when:
+- Its required actions actually complete.
+- Required artifacts are produced by this run.
+- The process exits normally with the expected success code.
+- No unhandled exception is recorded.
+- No test child process remains running.
+
+Use a run identifier or equivalent freshness check.
+
+Do not:
+- Reuse old screenshots or PASS reports.
+- Declare success before process exit.
+- Catch and ignore the shutdown exception.
+- Mark exceptions handled merely to obtain PASS.
+- Force Environment.Exit(0) to hide broken cleanup.
+- Remove smoke testing from acceptance.
+- Rely on arbitrary extra sleeps instead of fixing synchronization.
+
+Timeouts and forced termination are failures.
+
+Run each smoke test in an isolated process.
+Do not use the primary development host as the crash-test target.
+
+No offline startup, shutdown, or cleanup path may call native HMM hardware APIs.
+
+
+==================================================
+12. SDK, persistent diagnostics, and deployment
+==================================================
+
+Use the SDK package/profile associated with the verified template.
+
+Record actual:
+- DLL paths.
+- SHA-256 hashes.
+- Runtime profile.
+- Header/package source.
+
+Do not:
+- Mix DLL/JSON/data files from different SDK packages.
+- Disable hash verification.
+- Approve an unknown profile to make startup succeed.
+- Upgrade to another SDK as part of this UI task.
+
+Preserve:
+- Persistent logs.
+- Critical API BEFORE/AFTER records.
+- Crash markers.
+- Export Diagnostics.
+- Existing manual crash-dump support.
+
+Update application-name-dependent paths and identifiers for HMM_DemoApp:
+- App-local logs.
+- Crash markers.
+- Deployment scripts.
+- Manual WER scripts.
+
+Do not automatically modify the registry during build or startup.
+
+Keep application logs separate from environment-preparation evidence.
+
+The Release deployment must include everything required by the project:
+- EXE.
+- Managed assemblies and runtime metadata.
+- Native DLLs.
+- JSON files.
+- Complete data folder.
+- Profile manifests.
+- Required resources.
+
+Do not force a single-file EXE.
+
+Verify launch using the deployment folder rather than relying on an
+old source path or a special Terminal current directory.
+
+Document any runtime prerequisite not bundled with the deployment.
+
+
+==================================================
+13. Offline functional tests and visual inspection
+==================================================
+
+Verify that tests are hardware-free before executing them.
+
+Run the current template’s offline functional and ABI regression tests.
+
+Preserve behavioral coverage for:
+- SDK integration contracts.
+- Frame boundaries and generation handling.
+- Internal progressive display.
+- Requested / Effective Line Average geometry.
+- External exclusion from Line Average.
+- Non-rolling Frame Average.
+- Progressive averaged-line output.
+- Composite source selection and Include controls.
+- Scan Once completion behavior.
+- SDK gate.
+- Logging and deployment.
+- Shutdown thread affinity.
+
+UI-specific assertions may be updated when they refer to controls deliberately
+removed or relocated by this redesign.
+
+Document replacement coverage.
+Do not delete functional or shutdown assertions to make tests pass.
+
+Add checks for:
+
+1. Correct three-region layout.
+2. Narrow, independently scrollable settings column.
+3. Largest region assigned to images.
+4. 4 CH / Composite tab switching.
+5. Four equal square viewports with Uniform fit.
+6. Larger single Composite viewport.
+7. Composite settings located in Region 1.
+8. Full-width lower messages/data region.
+9. Draggable horizontal splitter.
+10. Scrollable message history.
+11. No forced auto-scroll while reading earlier messages.
+12. Tab switching does not reset acquisition or averaging.
+13. Display-only operations do not call SDK APIs.
+14. Correct mode-specific control states.
+15. Correct Prepared / Scanning / Stopped button states.
+16. Removal of the old right-side API Timing panel.
+17. Preservation of timing export and persistent diagnostics.
+18. Consistent dark styling, including popups and disabled controls.
+19. No duplicate timers or subscriptions.
+20. Clean smoke-test shutdown and normal process exit.
+
+Use existing synthetic fixtures or offline harnesses.
+
+If a UI-only harness must be extended:
+Inject synthetic data only into the display/test layer.
+Do not add a silent production fake-hardware fallback.
+
+Clearly label synthetic screenshots as offline test output.
+
+Generate and inspect at least:
+- 4 CH Display screenshot.
+- Composite screenshot.
+- Expanded lower messages/data area with visible scrolling.
+- Another representative window size.
+
+Prioritize typical sizes such as:
+- 1366×768.
+- 1920×1080.
+
+Respect actual available display and DPI conditions.
+Do not change the user’s system resolution/scaling automatically.
+
+Mark untested resolutions/DPI settings as NOT TESTED.
+
+Inspect and correct:
+- Clipping.
+- Overlap.
+- Unreadable text.
+- Hidden operation buttons.
+- Distorted images.
+- Excessive wasted space.
+- Inconsistent theme states.
+
+Do not merely generate screenshots without examining them.
+
+
+==================================================
+14. Final build and acceptance
+==================================================
+
+Complete:
+- Debug x64 build.
+- Release x64 build.
+- Functional and ABI regressions.
+- UI-specific tests.
+- Visual inspection.
+
+Target:
+0 warnings and 0 errors.
+
+Do not globally suppress warnings or remove tests to achieve the target.
+
+For the new DemoApp, run:
+- Five consecutive Debug --ui-smoke runs.
+- Five consecutive Release --ui-smoke runs.
+
+Run them sequentially in fresh processes.
+Record each exit code and shutdown result.
+
+Also verify ordinary offline UI launch/close outside smoke mode.
+
+Do not call native HMM hardware APIs during these checks.
+
+Preserve the distinction:
+
+Build Ready:
+Based on actual build results.
+
+Offline UI Ready:
+Based on functional/UI tests, rendered inspection, and clean process exit.
+
+Hardware Ready:
+NOT TESTED.
+
+Do not claim hardware validation from successful compilation,
+synthetic images, or offline tests.
+
+
+==================================================
+15. Deliverables and final response
+==================================================
+
+Deliver inside HMM_DemoApp:
+
+A. Complete source project.
+
+B. Release executable:
+HMM_DemoApp.exe
+
+C. Complete, portable Release deployment folder.
+
+D. Repeatable build script or documented build command.
+Support the actual workspace and SDK-root configuration.
+
+E. Documentation:
+
+BUILD.md
+- Required environment.
+- Actual restore/build/test commands.
+- SDK path configuration.
+- Release execution instructions.
+- Offline test entry points.
+
+UI-CHANGE-SUMMARY.md
+- Three-region layout changes.
+- Theme implementation.
+- Controls moved or removed.
+- Core modules reused.
+- Any necessary non-UI changes and their justification.
+- Confirmation that the verified shutdown fix was carried forward.
+
+BUILD-REPORT.md
+- Verified Development Template path and identity.
+- SDK profile and hashes.
+- Baseline verification result.
+- Debug/Release results.
+- Functional and UI tests actually executed.
+- Ten smoke-test run results and exit codes.
+- Normal launch/close result.
+- Screenshot paths.
+- Release output paths.
+- Original source/SDK integrity checks.
+- Untested items and known limitations.
+
+Report actual test counts.
+Do not copy historical counts into the new acceptance report.
+
+In the final response, provide:
+
+1. HMM_DemoApp source-project path.
+2. Release EXE path.
+3. Complete deployment-folder path.
+4. Debug/Release results.
+5. Offline regression and smoke-test results.
+6. Three-region UI preview links or paths.
+7. Confirmation of the retained shutdown fix.
+8. Any remaining blockers.
+9. Hardware tests not performed.
+
+If no genuine blocker remains, continue until the deliverables are complete.
+Do not stop after file discovery, a plan, the first successful build,
+or an uninspected screenshot.
+
+After delivery, stop and wait for manual testing.
+
+Do not automatically:
+- Initialize.
+- Prepare.
+- Start Scan.
+- Stop Scan.
+- Run Scan Once.
+- Run Direct Start.
+- Operate lasers, scanners, stages, or FPGA firmware.
