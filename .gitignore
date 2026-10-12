@@ -1,0 +1,21 @@
+# Local build outputs and development records
+**/bin/
+**/obj/
+**/.vs/
+**/reports/
+**/logs/
+**/offline-packages/
+*.pdb
+*.dmp
+*.log
+*.user
+*.suo
+# Native SDK and executable downloads belong in Releases or local workspaces.
+*.dll
+*.exe
+*.lib
+*.exp
+*.zip
+local-sdk/
+Environment/
+HMM_DemoApp/
